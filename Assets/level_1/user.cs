@@ -4,84 +4,80 @@ using Common;
 
 public class user : MonoBehaviour
 {
-	
-	public float Range = 100;
 	public float Cooldown = 1;
 	public int shotRange = 100;
 	
-	
+	// box or stone wich will be created
+	public GameObject boxObject;	
+
 	private float lastAttack = 0; 
-	private string enemyObjName = "Stone";
 	
 	// Use this for initialization
 	void Start ()
 	{
+		// sight instead of cursor
 		Screen.lockCursor = true;
-		Screen.showCursor = false;			
+		Screen.showCursor = false;
 	}
 	
 	// Update is called once per frame
 	void Update ()
-	{
-		
+	{		
 		if (lastAttack >= 0) {
 			// check the action cooldown
 			lastAttack -= Time.deltaTime;
 			
-		} else {
+		} else {		
 			
-			if (Input.GetKeyDown (KeyCode.Mouse0)) {
-				// if shot was successfull, reset the cooldown
-				if (ResizeTargetStone())
+			if (Input.GetKeyDown (KeyCode.Mouse0)) {				
+				var rayHit = CheckTarget();
+				if (rayHit != null)
+				{
+					// decrease volume
+					Stone stone = rayHit.Value.transform.gameObject.GetComponent<Stone>();
+					if (stone != null) stone.DecreaseVolume(rayHit.Value.point);
+					// and reset cooldown
 					lastAttack = Cooldown;
+				}				
 			}
 			if (Input.GetKeyDown (KeyCode.Mouse1)) {
-				// right click -> create new Stone
-				CreateNewStone();
+				var rayHit = CheckTarget();
+				if(rayHit != null)
+				{
+					// the box already exist, increase volume 
+					Stone stone = rayHit.Value.transform.gameObject.GetComponent<Stone>();
+					if (stone != null) stone.IncreaseVolume(rayHit.Value.point);
+				}
+				else
+					CreateNewStone();
+				
 				lastAttack = Cooldown;
 			}			
 		}	
 	}
 	
+	// make a hit, if cube exists return it
+	// else return null
 	RaycastHit? CheckTarget ()
 	{
-		// make a hit, if cube exists resize it
-		// else return null
 		Ray direction = Camera.main.ScreenPointToRay(Input.mousePosition);
 		
 		RaycastHit hit;
 		
 		if (Physics.Raycast(direction, out hit, shotRange) &&
-			hit.transform.name == enemyObjName)
-		{
-			Debug.DrawLine(Vector3.zero, hit.point, Color.green);
+			hit.transform.name == boxObject.name)
 			return hit;
-		}
-		else 
-		{
-			Debug.Log ("miss");
-			return null;
-		}
+	
+		return null;
 	}
 	
-	bool ResizeTargetStone()
-	{
-		// check if the target exist
-		var target = CheckTarget();		
-		if (target == null) return false;
 		
-		
-		Debug.Log ("Resize target");
-		return true;
-	}
-	
+	// create new instance of boxObject
 	void CreateNewStone()
 	{
-		var obj = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		obj.name = enemyObjName;
-		obj.AddComponent<Rigidbody> ();
-		obj.transform.position = this.transform.position;				
-		obj.transform.rotation = this.transform.rotation;
+		var position = transform.position + transform.rotation * Vector3.forward;
+		var stone = Instantiate(boxObject, position, transform.rotation);
+		stone.name = boxObject.name;	
 	}
 	
 }
