@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Common;
 
 public class user : MonoBehaviour
 {
@@ -20,6 +19,7 @@ public class user : MonoBehaviour
 		Screen.showCursor = false;
 	}
 	
+	
 	// Update is called once per frame
 	void Update ()
 	{		
@@ -38,7 +38,9 @@ public class user : MonoBehaviour
 					if (stone != null) stone.DecreaseVolume(rayHit.Value.point);
 					// and reset cooldown
 					lastAttack = Cooldown;
-				}				
+				}
+				else
+					Debug.Log ("Miss");
 			}
 			if (Input.GetKeyDown (KeyCode.Mouse1)) {
 				var rayHit = CheckTarget();
@@ -75,9 +77,11 @@ public class user : MonoBehaviour
 	// create new instance of boxObject
 	void CreateNewStone()
 	{
+		Debug.Log ("Create new stone");
 		var position = transform.position + transform.rotation * Vector3.forward;
 		var stone = Instantiate(boxObject, position, transform.rotation);
-		stone.name = boxObject.name;	
+		stone.name = boxObject.name;
+		Debug.Log (stone);
 	}
 	
 }
