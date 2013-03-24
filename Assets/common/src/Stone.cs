@@ -50,7 +50,6 @@ public class Stone : MonoBehaviour
 		mesh.vertices = cubeVertexs;
 		mesh.triangles = cubeFaces;			
 		mesh.uv = cubeUV;
-																
 			
 		renderer.material.color = Color.white;
 			
@@ -68,26 +67,30 @@ public class Stone : MonoBehaviour
 		int i = increase ? 1 : -1;
 			
 		Mesh newMesh;
-		switch (GetDirectional (point)) {
+		
+		var direction = GetDirectional(point);
+		Debug.Log(direction);
+		
+		switch (direction) {
 		case Faces.Left:
-			Debug.Log("Returns left");
 			newMesh = MoveWall (leftSide, -Vector3.right * i);
-			leftFace += i;
+			leftFace += (-i);
+			Debug.Log(leftFace);
 			break;
 		case Faces.Right:
-			Debug.Log ("Returns right");
 			newMesh = MoveWall (rightSide, Vector3.right * i);
 			rightFace += i;
+			Debug.Log (rightFace);
 			break;
 		case Faces.Front:
-			Debug.Log("Returns front");
 			newMesh = MoveWall (frontSide, Vector3.forward * i);
 			frontFace += i;
+			Debug.Log (frontFace);
 			break;
 		case Faces.Back:
-			Debug.Log ("Returns back");
 			newMesh = MoveWall (backSide, -Vector3.forward * i);
-			backFace += i;
+			backFace += (-i);
+			Debug.Log (backFace);
 			break;
 		case Faces.Top:
 			newMesh = MoveWall (topSide, Vector3.up);
@@ -98,41 +101,34 @@ public class Stone : MonoBehaviour
 			return;
 		}
 			
-		mf.mesh = newMesh;
-		mf.mesh.RecalculateNormals ();
-		mf.mesh.RecalculateBounds ();
-		mf.mesh.Optimize ();
-
+		newMesh.RecalculateBounds();
+		newMesh.RecalculateNormals();
+		newMesh.Optimize();		
+		
+		mf.mesh = newMesh;		
 		// change box collider size
-		var col = this.GetComponent<MeshCollider>();
-		if (col != null)
-		{
-			Debug.Log("set the mesh to collider");
-			col.sharedMesh = newMesh;			
-		}
+		mc.sharedMesh = null;
+		mc.sharedMesh = newMesh;
 	}
 		
 				
 	// return direction to grow
 	Faces GetDirectional (Vector3 point)
 	{
-		Debug.Log ("From global");
-		Debug.Log (point);
-		
 		var p = this.transform.InverseTransformPoint (point);
 		var delta = 0.001;
 		
 		Debug.Log("Get point: ");
 		Debug.Log(p);
 		
-		if (p.x - leftFace < delta)
+		if (Mathf.Abs(p.x - leftFace) < delta) 
 			return Faces.Left;
-		if (p.x - rightFace < delta)
+		if (Mathf.Abs(p.x - rightFace) < delta) 
 			return Faces.Right;
-		if (p.z - backFace < delta)
-			return Faces.Back;
-		if (p.z - frontFace < delta)
+		if (Mathf.Abs(p.z - frontFace) < delta) 
 			return Faces.Front;
+		if (Mathf.Abs(p.z - backFace) < delta) 
+			return Faces.Back;
 		
 		return Faces.Top;
 	}
