@@ -8,9 +8,15 @@ public class user : MonoBehaviour
 	
 	// box or stone wich will be created
 	public GameObject boxObject;	
-
-	private float lastAttack = 0; 
+	
+	
+	
+	
+	private float lastAttack = 0; 	
+	// check lock every Update time
 	private bool mouseLock = true;
+	
+	
 	
 	// Use this for initialization
 	void Start ()
@@ -82,7 +88,7 @@ public class user : MonoBehaviour
 		if (Physics.Raycast(direction, out hit, shotRange) &&
 			hit.transform.name == boxObject.name)
 		{
-			Debug.Log (hit.transform.gameObject);
+			//Debug.Log (hit.transform.gameObject);
 			return hit;
 		}
 		
@@ -93,11 +99,11 @@ public class user : MonoBehaviour
 	// create new instance of boxObject
 	void CreateNewStone()
 	{
-		Debug.Log ("Create new stone");
+		//Debug.Log ("Create new stone");
 		var position = transform.position + transform.rotation * Vector3.forward;
 		var stone = Instantiate(boxObject, position, transform.rotation);
 		stone.name = boxObject.name;
-		Debug.Log (stone);
+		//Debug.Log (stone);
 	}
 	
 }

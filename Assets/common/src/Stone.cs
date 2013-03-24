@@ -2,10 +2,13 @@ using UnityEngine;
 using System.Collections;
 
 [ExecuteInEditMode]
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshCollider))]
+[RequireComponent(typeof(Rigidbody))]
 public class Stone : MonoBehaviour
 {
-	public Mesh mesh;
+	//public Mesh mesh;
 	public string meshName = "StoneMesh";
 	public float size = 0.5f;
 		
@@ -33,20 +36,31 @@ public class Stone : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{				
-		mesh = new Mesh ();			
+		mf = this.GetComponent<MeshFilter>();
+		mc = this.GetComponent<MeshCollider>();
+		if (mf == null || mc == null)
+		{
+			Debug.LogError("Can't get a component");
+			return;
+		}
+		
+		
+		var mesh = new Mesh ();			
 		mesh.name = "Stone Mesh";
 		mesh.vertices = cubeVertexs;
 		mesh.triangles = cubeFaces;			
 		mesh.uv = cubeUV;
-									
-		mesh.RecalculateNormals ();
-		mesh.RecalculateBounds ();
-		mesh.Optimize ();						
+																
 			
 		renderer.material.color = Color.white;
 			
-		mf = GetComponent<MeshFilter> ();
+		mesh.RecalculateNormals();
+		mesh.RecalculateBounds();
+		mesh.Optimize();
+		
 		mf.mesh = mesh;
+		mc.sharedMesh = null;
+		mc.sharedMesh = mesh;
 	}
 		
 	void Resize (Vector3 point, bool increase = true)
@@ -88,12 +102,23 @@ public class Stone : MonoBehaviour
 		mf.mesh.RecalculateNormals ();
 		mf.mesh.RecalculateBounds ();
 		mf.mesh.Optimize ();
+
+		// change box collider size
+		var col = this.GetComponent<MeshCollider>();
+		if (col != null)
+		{
+			Debug.Log("set the mesh to collider");
+			col.sharedMesh = newMesh;			
+		}
 	}
 		
 				
 	// return direction to grow
 	Faces GetDirectional (Vector3 point)
 	{
+		Debug.Log ("From global");
+		Debug.Log (point);
+		
 		var p = this.transform.InverseTransformPoint (point);
 		var delta = 0.001;
 		
@@ -133,6 +158,8 @@ public class Stone : MonoBehaviour
 	}
 		
 	private MeshFilter mf;
+	private MeshCollider mc;
+	
 		
 	
 	int frontFace = 1;
