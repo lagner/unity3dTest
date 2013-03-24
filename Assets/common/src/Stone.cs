@@ -14,7 +14,10 @@ public class Stone : MonoBehaviour
 		Debug.Log("Desrease obj");
 		Resize (point, false);
 			
-		if (height < 1 || width < 1 || depth < 1) {
+		if (topFace < 1 ||
+			rightFace - leftFace < 1 ||
+			frontFace - backFace < 1)
+		{
 			Debug.Log ("Distroy the object");
 			Destroy (this.gameObject);
 		}
@@ -53,24 +56,28 @@ public class Stone : MonoBehaviour
 		Mesh newMesh;
 		switch (GetDirectional (point)) {
 		case Faces.Left:
+			Debug.Log("Returns left");
 			newMesh = MoveWall (leftSide, -Vector3.right * i);
-			width += i;
+			leftFace += i;
 			break;
 		case Faces.Right:
+			Debug.Log ("Returns right");
 			newMesh = MoveWall (rightSide, Vector3.right * i);
-			width += i;
+			rightFace += i;
 			break;
 		case Faces.Front:
+			Debug.Log("Returns front");
 			newMesh = MoveWall (frontSide, Vector3.forward * i);
-			depth += i;
+			frontFace += i;
 			break;
 		case Faces.Back:
+			Debug.Log ("Returns back");
 			newMesh = MoveWall (backSide, -Vector3.forward * i);
-			depth += i;
+			backFace += i;
 			break;
 		case Faces.Top:
 			newMesh = MoveWall (topSide, Vector3.up);
-			height += i;
+			topFace += i;
 			break;
 		default:
 			Debug.LogWarning ("Something wrong");
@@ -88,17 +95,20 @@ public class Stone : MonoBehaviour
 	Faces GetDirectional (Vector3 point)
 	{
 		var p = this.transform.InverseTransformPoint (point);
-		var delta = 0.01;
-			
-		if (p.x < delta)
-			return Faces.Left;			
-		if (p.z < delta)
-			return Faces.Back;
-			
-		if (p.x - 1f < delta)
+		var delta = 0.001;
+		
+		Debug.Log("Get point: ");
+		Debug.Log(p);
+		
+		if (p.x - leftFace < delta)
+			return Faces.Left;
+		if (p.x - rightFace < delta)
 			return Faces.Right;
-		if (p.z - 1f < delta)
+		if (p.z - backFace < delta)
+			return Faces.Back;
+		if (p.z - frontFace < delta)
 			return Faces.Front;
+		
 		return Faces.Top;
 	}
 		
@@ -124,10 +134,12 @@ public class Stone : MonoBehaviour
 		
 	private MeshFilter mf;
 		
-	// size. if < 1 object will be destroyed
-	int width = 1;
-	int depth = 1;
-	int height = 1;
+	
+	int frontFace = 1;
+	int backFace = 0;
+	int leftFace = 0;
+	int rightFace = 1;
+	int topFace = 1;
 		
 	// the indexes of vertices 		
 	int[] leftSide = { 0, 3, 4, 5};

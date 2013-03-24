@@ -1,9 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\common\prefabs\Stone.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\common\src\Stone.cs">
     <Files>
+      <File FileName="Assets\common\src\Stone.cs" Line="137" Column="2" />
       <File FileName="Assets\level_1\user.cs" Line="1" Column="1" />
-      <File FileName="Assets\common\prefabs\Stone.cs" Line="195" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
