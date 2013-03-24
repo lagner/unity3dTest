@@ -10,6 +10,7 @@ public class user : MonoBehaviour
 	public GameObject boxObject;	
 
 	private float lastAttack = 0; 
+	private bool mouseLock = true;
 	
 	// Use this for initialization
 	void Start ()
@@ -55,7 +56,17 @@ public class user : MonoBehaviour
 				
 				lastAttack = Cooldown;
 			}			
-		}	
+		}
+		
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			Screen.showCursor = true;
+			Screen.lockCursor = false;
+			mouseLock = false;
+		}
+		
+		if (Screen.lockCursor != mouseLock)
+			Screen.lockCursor = mouseLock;
 	}
 	
 	// make a hit, if cube exists return it
@@ -66,10 +77,15 @@ public class user : MonoBehaviour
 		
 		RaycastHit hit;
 		
+		Debug.Log(boxObject);
+		
 		if (Physics.Raycast(direction, out hit, shotRange) &&
 			hit.transform.name == boxObject.name)
+		{
+			Debug.Log (hit.transform.gameObject);
 			return hit;
-	
+		}
+		
 		return null;
 	}
 	

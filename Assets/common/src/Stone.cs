@@ -16,7 +16,7 @@ public class Stone : MonoBehaviour
 			
 		if (height < 1 || width < 1 || depth < 1) {
 			Debug.Log ("Distroy the object");
-			Destroy (this);
+			Destroy (this.gameObject);
 		}
 	}
 		
